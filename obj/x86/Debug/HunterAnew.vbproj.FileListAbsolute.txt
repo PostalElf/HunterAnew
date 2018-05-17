@@ -1,0 +1,10 @@
+C:\Users\Terence\AppData\Local\Temporary Projects\HunterAnew\obj\x86\Debug\HunterAnew.Resources.resources
+C:\Users\Terence\AppData\Local\Temporary Projects\HunterAnew\obj\x86\Debug\HunterAnew.vbproj.GenerateResource.Cache
+D:\Visual Studio Projects\HunterAnew\HunterAnew\bin\Debug\HunterAnew.exe
+D:\Visual Studio Projects\HunterAnew\HunterAnew\bin\Debug\HunterAnew.pdb
+D:\Visual Studio Projects\HunterAnew\HunterAnew\bin\Debug\HunterAnew.xml
+D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.Resources.resources
+D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.vbproj.GenerateResource.Cache
+D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.exe
+D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.xml
+D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.pdb
