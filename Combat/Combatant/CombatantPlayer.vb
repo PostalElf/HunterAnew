@@ -64,4 +64,11 @@
         IO.BracketFileSaveAll(partsPathname, partsRawAll)
     End Sub
 #End Region
+
+#Region "Battlefield"
+    Public Overrides Function Tick(ByVal battlefield As Battlefield) As Boolean
+        Dim canAct As Boolean = MyBase.TickBase(battlefield)
+        Return canAct
+    End Function
+#End Region
 End Class

@@ -116,16 +116,6 @@
     Private Agility As Integer
     Private Armour As Integer
 
-    Private _DamageSustained As Integer
-    Private Property DamageSustained As Integer
-        Get
-            Return _DamageSustained
-        End Get
-        Set(ByVal value As Integer)
-            _DamageSustained = value
-            If _DamageSustained > Health Then RaiseEvent WasDestroyed(Me)
-        End Set
-    End Property
     Private Health As Integer
     Private _ShockAbsorb As Double
     Public ReadOnly Property ShockAbsorb As Double
@@ -179,6 +169,16 @@
 #End Region
 
 #Region "Battlefield"
+    Private _DamageSustained As Integer
+    Private Property DamageSustained As Integer
+        Get
+            Return _DamageSustained
+        End Get
+        Set(ByVal value As Integer)
+            _DamageSustained = value
+            If _DamageSustained > Health Then RaiseEvent WasDestroyed(Me)
+        End Set
+    End Property
     Public Sub IsAttacked(ByVal attack As Attack, ByVal attacker As Combatant)
         Dim roll As Integer = Rng.Next(1, 101)
         If roll <= attack.Accuracy - Agility Then
@@ -201,6 +201,10 @@
             'attack misses
             RaiseEvent WasMissed(Me, attacker, attack)
         End If
+    End Sub
+
+    Public Sub Tick(ByVal battlefield As Battlefield)
+        If AttackCooldown > 0 Then AttackCooldown -= 1
     End Sub
 #End Region
 End Class

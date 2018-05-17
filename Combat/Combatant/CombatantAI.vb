@@ -39,57 +39,58 @@
 #End Region
 
 #Region "Battlefield"
-    '    Private CurrentAttack As Attack
-    '    Private CurrentTarget As Combatant
+    Private CurrentAttack As Attack
+    Private CurrentTarget As Combatant
 
-    '    Public Overrides Function Tick() As Boolean
-    '        Dim canAct As Boolean = MyBase.TickBase()
-    '        If canAct = True Then
-    '            'set target and attack
-    '            If CurrentAttack Is Nothing Then SetCurrentAttack()
-    '            If CurrentTarget Is Nothing Then SetCurrentTarget()
+    Public Overrides Function Tick(ByVal battlefield As battlefield) As Boolean
+        Dim canAct As Boolean = MyBase.TickBase(battlefield)
+        If canAct = True Then
+            'set target and attack
+            If CurrentAttack Is Nothing Then SetCurrentAttack()
+            If CurrentTarget Is Nothing Then SetCurrentTarget(battlefield)
 
-    '            'shortcircuit in the event that there's nothing left to do
-    '            If CurrentTarget Is Nothing OrElse CurrentAttack Is Nothing Then Return False
+            'shortcircuit in the event that there's nothing left to do
+            If CurrentTarget Is Nothing OrElse CurrentAttack Is Nothing Then Return False
 
-    '            'check target distance
-    '            Dim distance As Integer = CurrentTarget.BattlefieldPosition + BattlefieldPosition
-    '            If distance >= CurrentAttack.MinRange AndAlso distance <= CurrentAttack.MaxRange Then
-    '                'target in range; attack
-    '                Dim targetBodypart As Bodypart = GetRandom(CurrentTarget.Bodyparts)
-    '                targetBodypart.IsAttacked(Me, CurrentAttack)
-    '            Else
-    '                'target out of range; move
-    '                Dim targetDistance As ePosition
-    '                If distance < CurrentAttack.MinRange Then
-    '                    'move further
-    '                    targetDistance = BattlefieldPosition + 1
-    '                ElseIf distance > CurrentAttack.MaxRange Then
-    '                    'move nearer
-    '                    targetDistance = BattlefieldPosition - 1
-    '                End If
-    '                If targetDistance < ePosition.Close Then targetDistance = ePosition.Close
-    '                If targetDistance > ePosition.Back Then targetDistance = ePosition.Back
-    '                If targetDistance = BattlefieldPosition Then Return False
-    '                PerformsMove(targetDistance)
-    '            End If
+            'check target distance
+            Dim distance As Integer = CurrentTarget.BattlefieldPosition + BattlefieldPosition
+            If distance >= CurrentAttack.MinRange AndAlso distance <= CurrentAttack.MaxRange Then
+                'target in range; attack
+                Dim targetBodypart As Bodypart = GetRandom(CurrentTarget.Bodyparts)
+                targetBodypart.IsAttacked(CurrentAttack, Me)
+            Else
+                'target out of range; move
+                Dim targetDistance As eBattlefieldPosition
+                If distance < CurrentAttack.MinRange Then
+                    'move further
+                    targetDistance = BattlefieldPosition + 1
+                ElseIf distance > CurrentAttack.MaxRange Then
+                    'move nearer
+                    targetDistance = BattlefieldPosition - 1
+                End If
+                If targetDistance < 0 Then targetDistance = 0
+                If targetDistance > 2 Then targetDistance = 2
+                If targetDistance = BattlefieldPosition Then Return False
+                BattlefieldPosition = targetDistance
+            End If
 
-    '            'reset attack and target
-    '            If CurrentAttack.Ready = False Then CurrentAttack = Nothing
-    '            If Battlefield.Contains(CurrentTarget) = False Then CurrentTarget = Nothing
+            'reset attack and target
+            If CurrentAttack.Ready = False Then CurrentAttack = Nothing
+            If Battlefield.Contains(CurrentTarget) = False Then CurrentTarget = Nothing
 
-    '            'return true for performing an action
-    '            Return True
-    '        Else
-    '            Return False
-    '        End If
-    '    End Function
-    '    Private Sub SetCurrentAttack()
-    '        CurrentAttack = GetRandom(AttacksReady)
-    '    End Sub
-    '    Private Sub SetCurrentTarget()
-    '        CurrentTarget = GetRandom(Battlefield.GetTargetsWithinRange(Me, CurrentAttack))
-    '        If CurrentTarget Is Nothing Then CurrentTarget = GetRandom(Battlefield.GetTargets(Me))
-    '    End Sub
+            'return true for performing an action
+            Return True
+        Else
+            'empty tick, return false for not performing an action
+            Return False
+        End If
+    End Function
+    Private Sub SetCurrentAttack()
+        CurrentAttack = GetRandom(AttacksReady)
+    End Sub
+    Private Sub SetCurrentTarget(ByVal battlefield As Battlefield)
+        CurrentTarget = GetRandom(Battlefield.GetTargetsWithinRange(Me, CurrentAttack))
+        If CurrentTarget Is Nothing Then CurrentTarget = GetRandom(Battlefield.GetTargets(Me))
+    End Sub
 #End Region
 End Class

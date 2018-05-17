@@ -1,4 +1,4 @@
-﻿Public Class Combatant
+﻿Public MustInherit Class Combatant
 
 #Region "Personal Identifiers"
     Protected _Name As String
@@ -12,6 +12,7 @@
 #Region "Events"
     Public Event WasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer, ByVal source As String)
     Public Event WasDestroyed(ByVal combatant As Combatant)
+    Public Event WasMoved(ByVal combatant As Combatant, ByVal oldDistance As eBattlefieldPosition, ByVal targetDistance As eBattlefieldPosition)
 
     Private Sub HandlerBodypartHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean)
         Dim damage As Integer
@@ -36,6 +37,9 @@
     End Sub
     Private Sub HandlerWasDestroyed(ByVal combatant As Combatant) Handles MyClass.WasDestroyed
         Report.Add("Combatant Destroyed", combatant.Name & " has been destroyed!!!", ConsoleColor.White)
+    End Sub
+    Private Sub HandlerWasMoved(ByVal combatant As Combatant, ByVal oldDistance As eBattlefieldPosition, ByVal targetDistance As eBattlefieldPosition)
+        Report.Add("Combatant Move", Name & " has moved from " & oldDistance.ToString & " to " & targetDistance.ToString & ".", ConsoleColor.DarkGray)
     End Sub
 
     Private Sub HandlerShieldTurnedOn(ByVal shield As Shield)
@@ -195,5 +199,49 @@
 
         If _ShockSustained > ShockCapacity Then RaiseEvent WasDestroyed(Me)
     End Sub
+
+    Private _BattlefieldPosition As eBattlefieldPosition
+    Public Property BattlefieldPosition As eBattlefieldPosition
+        Get
+            Return _BattlefieldPosition
+        End Get
+        Set(ByVal value As eBattlefieldPosition)
+            If value = _BattlefieldPosition Then Exit Property
+
+            RaiseEvent WasMoved(Me, _BattlefieldPosition, value)
+            _BattlefieldPosition = value
+        End Set
+    End Property
+    Public Sub BattlefieldSetup(ByVal battlefield As Battlefield)
+        _BattlefieldPosition = Rng.Next(0, 3)
+
+        'randomise initiative
+        BattlefieldInitiativeReset(Battlefield)
+        BattlefieldInitiative += Rng.Next(1, 11)
+    End Sub
+    Private BattlefieldInitiative As Integer
+    Private Sub BattlefieldInitiativeReset(ByVal battlefield As Battlefield)
+        BattlefieldInitiative = Battlefield.GetHighestSpeed - Speed + 10
+    End Sub
+
+    Public MustOverride Function Tick(ByVal battlefield As Battlefield) As Boolean
+    Protected Function TickBase(ByVal battlefield As Battlefield) As Boolean
+        BattlefieldInitiative -= 1
+        If BattlefieldInitiative <= 0 Then
+            'reset initiative
+            BattlefieldInitiativeReset(battlefield)
+
+            'tick bodyparts
+            For n = Bodyparts.Count - 1 To 0 Step -1
+                Dim bp As Bodypart = Bodyparts(n)
+                bp.Tick(battlefield)
+            Next
+
+            'return true to indicate that turn can be performed
+            Return True
+        End If
+
+        Return False
+    End Function
 #End Region
 End Class
