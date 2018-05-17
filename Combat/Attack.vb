@@ -68,5 +68,10 @@
         total &= " (" & Penetration & "%)"
         Return total
     End Function
+    Public ReadOnly Property PossessiveName As String
+        Get
+            Return Bodypart.Combatant.Name & "'s " & Name
+        End Get
+    End Property
 #End Region
 End Class

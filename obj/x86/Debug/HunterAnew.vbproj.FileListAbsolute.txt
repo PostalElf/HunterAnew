@@ -8,3 +8,11 @@ D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.vbproj.
 D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.exe
 D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.xml
 D:\Visual Studio Projects\HunterAnew\HunterAnew\obj\x86\Debug\HunterAnew.pdb
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\obj\x86\Debug\HunterAnew.exe
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\obj\x86\Debug\HunterAnew.xml
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\obj\x86\Debug\HunterAnew.pdb
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\bin\Debug\HunterAnew.exe
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\bin\Debug\HunterAnew.pdb
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\bin\Debug\HunterAnew.xml
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\obj\x86\Debug\HunterAnew.Resources.resources
+C:\Users\Owner\Documents\Visual Studio 2010\Projects\HunterAnew\obj\x86\Debug\HunterAnew.vbproj.GenerateResource.Cache

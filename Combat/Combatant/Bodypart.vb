@@ -6,10 +6,15 @@
             Return _Name
         End Get
     End Property
-    Public Owner As Combatant
+    Public ReadOnly Property PossessiveName As String
+        Get
+            Return Combatant.Name & "'s " & Name
+        End Get
+    End Property
+    Public Combatant As Combatant
 
     Public Overrides Function ToString() As String
-        Return Owner.Name & "'s " & Name
+        Return Name
     End Function
 #End Region
 
@@ -160,17 +165,17 @@
     Public Event WasDestroyed(ByVal bodypart As Bodypart)
 
     Private Sub HandlerWasMissed(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack) Handles MyClass.WasMissed
-        Report.Add("Bodypart Missed", attacker.Name & " missed " & bodypart.Owner.Name & "'s " & bodypart.Name & "!", ConsoleColor.DarkGreen)
+        Report.Add("Bodypart Missed", attack.PossessiveName & " missed " & bodypart.possessivename & "!", ConsoleColor.DarkGreen)
     End Sub
     Private Sub HandlerWasHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean) Handles MyClass.WasHit
         Dim damage As Integer
         If isFullHit = True Then damage = attack.DamageFull Else damage = attack.DamageGlancing
 
-        Report.Add("Bodypart Hit", attacker.Name & " hit " & Owner.Name & "'s " & bodypart.Name & " for " & damage & " " & attack.DamageType.ToString & "!", ConsoleColor.DarkRed)
+        Report.Add("Bodypart Hit", attack.PossessiveName & " hit " & bodypart.PossessiveName & " for " & damage & " " & attack.DamageType.ToString & "!", ConsoleColor.DarkRed)
         DamageSustained += damage
     End Sub
     Private Sub HandlerWasDestroyed(ByVal bodypart As Bodypart) Handles MyClass.WasDestroyed
-        Report.Add("Bodypart Destroyed", bodypart.Owner.Name & "'s " & bodypart.Name & " has been destroyed!", ConsoleColor.Red)
+        Report.Add("Bodypart Destroyed", bodypart.PossessiveName & " has been destroyed!", ConsoleColor.Red)
     End Sub
 #End Region
 

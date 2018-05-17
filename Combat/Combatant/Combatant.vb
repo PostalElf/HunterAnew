@@ -22,7 +22,7 @@
         ShockSustained += shock
     End Sub
     Private Sub HandlerBodypartDestroyed(ByVal bodypart As Bodypart)
-        bodypart.Owner = Nothing
+        bodypart.Combatant = Nothing
         If Bodyparts.Contains(bodypart) Then Bodyparts.Remove(bodypart)
 
         If HasVitals = False Then
@@ -51,7 +51,7 @@
         End Get
     End Property
     Protected Sub Add(ByVal bp As Bodypart)
-        bp.Owner = Me
+        bp.Combatant = Me
         Bodyparts.Add(bp)
 
         With bp

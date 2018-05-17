@@ -16,7 +16,7 @@
                 Case "Bodypart"
                     Dim bpRaw As Queue(Of String) = IO.BracketFileget("data/" & name & "-Parts.txt", entry)
                     Dim bp As Bodypart = Bodypart.Construct(bpRaw)
-                    Bodyparts.Add(bp)
+                    bodyparts.Add(bp)
                 Case Else
                     BaseBodypart.Construct(header, entry)
             End Select
@@ -29,6 +29,7 @@
         With total
             ._Name = name
             .BaseBodypart = baseBodypart
+            .BaseBodypart.Combatant = total
             For Each bp In bodyparts
                 .Add(bp)
             Next

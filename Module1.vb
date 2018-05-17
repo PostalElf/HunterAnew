@@ -1,7 +1,8 @@
 ﻿Module Module1
 
     Sub Main()
-        Dim attack As Attack = attack.Construct("Claws|0|1|3|1|90|45|0.5|0|15|10")
+        Dim goblin As CombatantAI = CombatantAI.Construct("Goblin")
+        Dim attack As Attack = goblin.AttacksAll(0)
         Dim mech As CombatantPlayer = CombatantPlayer.Construct("Fenris")
 
         Report.TurnNumberAdvance()
