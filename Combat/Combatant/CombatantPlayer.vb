@@ -1,5 +1,6 @@
 ﻿Public Class CombatantPlayer
     Inherits Combatant
+
 #Region "Constructors"
     Public Shared Function Construct(ByVal name As String) As CombatantPlayer
         Dim bodyparts As New List(Of Bodypart)
