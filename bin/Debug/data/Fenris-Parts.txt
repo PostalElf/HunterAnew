@@ -34,3 +34,10 @@ Health:10
 
 ShockLoss:100
 IsVital:True
+
+[Shield]
+Weight:0
+Armour:5
+Health:10
+ShockLoss:20
+Shield:Plasma Shield|10|5|5

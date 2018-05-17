@@ -45,7 +45,8 @@
             Case "Health" : Health = CInt(entry)
             Case "ShockAbsorb" : _ShockAbsorb = CDbl(entry)
             Case "ShockLoss" : _ShockLoss = CInt(entry)
-            Case "Attack" : Attack = Attack.Construct(entry)
+            Case "Attack" : Attack = Attack.Construct(entry) : Attack.Bodypart = Me
+            Case "Shield" : Shield = Shield.Construct(entry) : Shield.Bodypart = Me
         End Select
     End Sub
     Public Function Export() As Queue(Of String)
@@ -66,6 +67,7 @@
             .Enqueue("ShockLoss:" & ShockLoss)
 
             If Attack Is Nothing = False Then .Enqueue("Attack:" & Attack.Export)
+            If Shield Is Nothing = False Then .Enqueue("Shield:" & Shield.export)
         End With
         Return total
     End Function
@@ -138,16 +140,7 @@
         End Get
     End Property
 
-    Private _Attack As Attack
-    Public Property Attack As Attack
-        Get
-            Return _Attack
-        End Get
-        Set(ByVal value As Attack)
-            _Attack = value
-            _Attack.Bodypart = Me
-        End Set
-    End Property
+    Public Attack As Attack
     Private AttackCooldown As Integer
     Public ReadOnly Property AttackReady As Boolean
         Get
@@ -157,6 +150,12 @@
             Return True
         End Get
     End Property
+
+    Public WithEvents Shield As Shield
+    Private Sub HandlerShieldOverloaded(ByVal shield As Shield, ByVal overloadShock As Integer, ByVal overloadDamage As Integer) Handles Shield.WasOverloaded
+        DamageSustained += overloadDamage
+        Report.Add("Shield Overloaded", shield.Bodypart.PossessiveName & " took " & overloadDamage & " damage.", ConsoleColor.DarkRed)
+    End Sub
 #End Region
 
 #Region "Events"
@@ -183,14 +182,20 @@
     Public Sub IsAttacked(ByVal attack As Attack, ByVal attacker As Combatant)
         Dim roll As Integer = Rng.Next(1, 101)
         If roll <= attack.Accuracy - Agility Then
-            'attack hits
-            roll = Rng.Next(1, 101)
-            If roll <= attack.Penetration - Armour Then
-                'full hit
-                RaiseEvent WasHit(Me, attacker, attack, True)
+            'attack hits; check for shield
+            If Combatant.ActiveShield Is Nothing = False Then
+                'shielded
+                Combatant.ActiveShield.IsAttacked(attack, attacker)
             Else
-                'glancing hit
-                RaiseEvent WasHit(Me, attacker, attack, False)
+                'no shield; roll for penetration
+                roll = Rng.Next(1, 101)
+                If roll <= attack.Penetration - Armour Then
+                    'full hit
+                    RaiseEvent WasHit(Me, attacker, attack, True)
+                Else
+                    'glancing hit
+                    RaiseEvent WasHit(Me, attacker, attack, False)
+                End If
             End If
         Else
             'attack misses

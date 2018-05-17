@@ -10,7 +10,7 @@
 #End Region
 
 #Region "Events"
-    Public Event WasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer)
+    Public Event WasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer, ByVal source As String)
     Public Event WasDestroyed(ByVal combatant As Combatant)
 
     Private Sub HandlerBodypartHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean)
@@ -19,7 +19,7 @@
 
         Dim shock As Integer = Math.Round(damage * (bodypart.ShockAbsorb + attack.ShockModifier))
         If shock <= 0 Then shock = 1
-        ShockSustained += shock
+        AddShock(shock, "Hit")
     End Sub
     Private Sub HandlerBodypartDestroyed(ByVal bodypart As Bodypart)
         bodypart.Combatant = Nothing
@@ -28,14 +28,33 @@
         If HasVitals = False Then
             RaiseEvent WasDestroyed(Me)
         Else
-            ShockSustained += bodypart.ShockLoss
+            AddShock(bodypart.ShockLoss, "Bodypart Destroyed")
         End If
     End Sub
-    Private Sub HandlerWasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer) Handles MyClass.WasShocked
-        Report.Add("Shocked", combatant.Name & " takes " & shockAmount & " shock.", ConsoleColor.DarkRed)
+    Private Sub HandlerWasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer, ByVal source As String) Handles MyClass.WasShocked
+        Report.Add("Shocked", combatant.Name & " takes " & shockAmount & " shock [" & source & "].", ConsoleColor.DarkRed)
     End Sub
     Private Sub HandlerWasDestroyed(ByVal combatant As Combatant) Handles MyClass.WasDestroyed
         Report.Add("Combatant Destroyed", combatant.Name & " has been destroyed!!!", ConsoleColor.White)
+    End Sub
+
+    Private Sub HandlerShieldTurnedOn(ByVal shield As Shield)
+        'turn off all other shields
+        For Each bp In Bodyparts
+            If bp.Shield Is Nothing = False Then
+                If bp.Shield.Equals(shield) = False Then bp.Shield.IsActive = False
+            End If
+        Next
+
+        'set active shield
+        _ActiveShield = shield
+    End Sub
+    Private Sub HandlerShieldTurnedOff(ByVal shield As Shield)
+        'remove active shield
+        If _ActiveShield.Equals(shield) Then _ActiveShield = Nothing
+    End Sub
+    Private Sub HandlerShieldOverloaded(ByVal shield As Shield, ByVal overloadShock As Integer, ByVal overloadDamage As Integer)
+        AddShock(overloadShock, "Shield Overload")
     End Sub
 #End Region
 
@@ -55,8 +74,14 @@
         Bodyparts.Add(bp)
 
         With bp
-            AddHandler bp.WasHit, AddressOf HandlerBodypartHit
-            AddHandler bp.WasDestroyed, AddressOf HandlerBodypartDestroyed
+            AddHandler .WasHit, AddressOf HandlerBodypartHit
+            AddHandler .WasDestroyed, AddressOf HandlerBodypartDestroyed
+
+            If .Shield Is Nothing = False Then
+                AddHandler .Shield.WasTurnedOn, AddressOf HandlerShieldTurnedOn
+                AddHandler .Shield.WasTurnedOff, AddressOf HandlerShieldTurnedOff
+                AddHandler .Shield.WasOverloaded, AddressOf HandlerShieldOverloaded
+            End If
         End With
     End Sub
 
@@ -77,6 +102,21 @@
                 If Attack.Ready = True Then total.Add(Attack)
             Next
             Return total
+        End Get
+    End Property
+    Public ReadOnly Property ShieldsAll As List(Of Shield)
+        Get
+            Dim total As New List(Of Shield)
+            For Each bp In Bodyparts
+                If bp.Shield Is Nothing = False Then total.Add(bp.Shield)
+            Next
+            Return total
+        End Get
+    End Property
+    Private _ActiveShield As Shield
+    Public ReadOnly Property ActiveShield As Shield
+        Get
+            Return _ActiveShield
         End Get
     End Property
 
@@ -149,20 +189,11 @@
 
 #Region "Battlefield"
     Private _ShockSustained As Integer
-    Private Property ShockSustained As Integer
-        Get
-            Return _ShockSustained
-        End Get
-        Set(ByVal value As Integer)
-            Dim difference As Integer = Math.Abs(value - _ShockSustained)
-            _ShockSustained = value
-            If value = 0 OrElse difference = 0 Then Exit Property 'shortcircuit for resetting health or no change
+    Private Sub AddShock(ByVal shock As Integer, ByVal source As String)
+        _ShockSustained += shock
+        RaiseEvent WasShocked(Me, shock, source)
 
-            RaiseEvent WasShocked(Me, difference)
-            If _ShockSustained > ShockCapacity Then
-                RaiseEvent WasDestroyed(Me)
-            End If
-        End Set
-    End Property
+        If _ShockSustained > ShockCapacity Then RaiseEvent WasDestroyed(Me)
+    End Sub
 #End Region
 End Class

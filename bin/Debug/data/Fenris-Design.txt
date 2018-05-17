@@ -23,4 +23,4 @@ ShockLoss:0
 Bodypart:Arm
 
 Bodypart:Head
-
+Bodypart:Shield

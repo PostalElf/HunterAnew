@@ -4,6 +4,7 @@
         Dim goblin As CombatantAI = CombatantAI.Construct("Goblin")
         Dim attack As Attack = goblin.AttacksAll(0)
         Dim mech As CombatantPlayer = CombatantPlayer.Construct("Fenris")
+        mech.ShieldsAll(0).IsActive = True
 
         Report.TurnNumberAdvance()
 
