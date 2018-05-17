@@ -159,14 +159,14 @@
     Public Event WasHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean)
     Public Event WasDestroyed(ByVal bodypart As Bodypart)
 
-    Private Sub HandlerWasMissed(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack)
+    Private Sub HandlerWasMissed(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack) Handles MyClass.WasMissed
         Report.Add("Bodypart Missed", attacker.Name & " missed " & bodypart.Owner.Name & "'s " & bodypart.Name & "!", ConsoleColor.DarkGreen)
     End Sub
     Private Sub HandlerWasHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean) Handles MyClass.WasHit
         Dim damage As Integer
         If isFullHit = True Then damage = attack.DamageFull Else damage = attack.DamageGlancing
 
-        Report.Add("Bodypart Hit", attacker.Name & " hit " & bodypart.Owner.Name & "'s " & bodypart.Name & " for " & damage & " " & attack.DamageType.ToString & "!", ConsoleColor.DarkRed)
+        Report.Add("Bodypart Hit", attacker.Name & " hit " & Owner.Name & "'s " & bodypart.Name & " for " & damage & " " & attack.DamageType.ToString & "!", ConsoleColor.DarkRed)
         DamageSustained += damage
     End Sub
     Private Sub HandlerWasDestroyed(ByVal bodypart As Bodypart) Handles MyClass.WasDestroyed

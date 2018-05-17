@@ -10,7 +10,7 @@
 #End Region
 
 #Region "Events"
-    Public Event WasShocked(ByVal combatant As Combatant)
+    Public Event WasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer)
     Public Event WasDestroyed(ByVal combatant As Combatant)
 
     Private Sub HandlerBodypartHit(ByVal bodypart As Bodypart, ByVal attacker As Combatant, ByVal attack As Attack, ByVal isFullHit As Boolean)
@@ -25,10 +25,17 @@
         bodypart.Owner = Nothing
         If Bodyparts.Contains(bodypart) Then Bodyparts.Remove(bodypart)
 
-        ShockSustained += bodypart.ShockLoss
+        If HasVitals = False Then
+            RaiseEvent WasDestroyed(Me)
+        Else
+            ShockSustained += bodypart.ShockLoss
+        End If
     End Sub
-    Private Sub HandlerWasShocked(ByVal combatant As Combatant) Handles MyClass.WasShocked
-
+    Private Sub HandlerWasShocked(ByVal combatant As Combatant, ByVal shockAmount As Integer) Handles MyClass.WasShocked
+        Report.Add("Shocked", combatant.Name & " takes " & shockAmount & " shock.", ConsoleColor.DarkRed)
+    End Sub
+    Private Sub HandlerWasDestroyed(ByVal combatant As Combatant) Handles MyClass.WasDestroyed
+        Report.Add("Combatant Destroyed", combatant.Name & " has been destroyed!!!", ConsoleColor.White)
     End Sub
 #End Region
 
@@ -147,10 +154,11 @@
             Return _ShockSustained
         End Get
         Set(ByVal value As Integer)
+            Dim difference As Integer = Math.Abs(value - _ShockSustained)
             _ShockSustained = value
-            If value = 0 Then Exit Property 'shortcircuit to escape when resetting health
+            If value = 0 OrElse difference = 0 Then Exit Property 'shortcircuit for resetting health or no change
 
-            RaiseEvent WasShocked(Me)
+            RaiseEvent WasShocked(Me, difference)
             If _ShockSustained > ShockCapacity Then
                 RaiseEvent WasDestroyed(Me)
             End If
