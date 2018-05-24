@@ -68,7 +68,14 @@
 #Region "Battlefield"
     Public Overrides Function Tick(ByVal battlefield As Battlefield) As Boolean
         Dim canAct As Boolean = MyBase.TickBase(battlefield)
-        Return canAct
+
+        If canAct = True Then
+            Console.ReadLine()
+            Return True
+        Else
+            'empty tick; return false for not doing anything
+            Return False
+        End If
     End Function
 #End Region
 End Class

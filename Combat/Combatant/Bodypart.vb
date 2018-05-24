@@ -201,6 +201,9 @@
             'attack misses
             RaiseEvent WasMissed(Me, attacker, attack)
         End If
+
+        'cooldown for attack
+        attack.Bodypart.AttackCooldown = attack.Cooldown
     End Sub
 
     Public Sub Tick(ByVal battlefield As Battlefield)

@@ -6,15 +6,9 @@
         Dim mech As CombatantPlayer = CombatantPlayer.Construct("Fenris")
         mech.ShieldsAll(0).IsActive = True
 
-        Report.TurnNumberAdvance()
-
-        While True
-            Dim bodypart As Bodypart = GetRandom(mech.Bodyparts)
-            bodypart.IsAttacked(attack, mech)
-            Report.ShowReports()
-            Report.TurnNumberAdvance()
-            Console.ReadLine()
-        End While
+        Dim battlefield As New Battlefield(New List(Of Combatant) From {goblin, mech})
+        battlefield.Main()
+        Console.ReadLine()
     End Sub
 
 End Module
